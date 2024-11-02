@@ -12,12 +12,12 @@ class HashTable:
         self.capacity = capacity
         self.size = 0
         self.table = [None] * capacity
-
+    # Map values to key
     def _hash(self, key):
         return hash(key) % self.capacity
 
 # Inserts data into the hash table
-    def put(self, key, value):
+    def insert(self, key, value):
         index = self._hash(key)
 
         if self.table[index] is None:
@@ -30,7 +30,7 @@ class HashTable:
                     current.value = value
                     return
                 current = current.next
-            new_node = Node(key, value)
+            new_node = Package(key, value)
             new_node.next = self.table[index]
             self.table[index] = new_node
             self.size += 1
@@ -45,23 +45,6 @@ class HashTable:
                 return current.value
             current = current.next
 
-# Removes data from the Hash Table
-    def delete(self, key):
-        index = self._hash(key)
-        previous = None
-        current = self.table[index]
-
-        while current:
-            if current.key == key:
-                if previous:
-                    previous.next = current.next
-                else:
-                    self.table[index] = current.next
-                    self.size -= 1
-                    return
-                previous = current
-                current = current.next
-
     def __str__(self):
         elements = []
         for i in range(self.capacity):
@@ -71,5 +54,19 @@ class HashTable:
                 current = current.next
         return str(elements)
 
+class Package:
+    def __init__(self, package_id, address, deadline, city, state, zip_code, pk_weight, status, special_notes):
+        self.package_id = package_id
+        self.address = address
+        self.city = city
+        self.state = state
+        self.deadline = deadline
+        self.zip_code = zip_code
+        self.pk_weight = pk_weight
+        self.status = status
+        self.special_notes = special_notes
 
+class Truck:
+    def __init__(self, truck):
+        self.truck = truck
 
