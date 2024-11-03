@@ -1,72 +1,95 @@
-#Sets key-value pair and pointer for next node in hash table
-class Node:
-    def __init__(self, key, value):
-        self.key = key
-        self.value = value
-        self.next = None
-        self.prev = None
+import csv
 
-# Creates self adjusting hash table
+# Creates hash table
 class HashTable:
-    def __init__(self, capacity):
-        self.capacity = capacity
-        self.size = 0
-        self.table = [None] * capacity
-    # Map values to key
-    def _hash(self, key):
-        return hash(key) % self.capacity
+    def __init__(self, initial_capacity=10):
+        self.table = [None] * initial_capacity
+        #for i in range(initial_capacity):
+            #self.table.append([])
 
-# Inserts data into the hash table
+    # Maps values to key
+    def hash_function(self, key):
+        return hash(key) % self.size
+
+    # Inserts data into the hash table
     def insert(self, key, value):
-        index = self._hash(key)
+        bucket = hash(key) % len(self.table)
+        bucket_list = self.table[bucket]
 
-        if self.table[index] is None:
-            self.table[index] = Node(key, value)
-            self.size += 1
-        else:
-            current = self.table[index]
-            while current:
-                if current.key == key:
-                    current.value = value
-                    return
-                current = current.next
-            new_node = Package(key, value)
-            new_node.next = self.table[index]
-            self.table[index] = new_node
-            self.size += 1
+        # Updates key if already in the bucket
+        for kv in bucket_list:
+            if kv[0] == key:
+                kv[1] = value
+                return True
 
-# Search function
-    def search(self, key):
-        index = self._hash(key)
+        key_value = [key, value]
+        bucket_list.append(key_value)
+        return True
 
-        current = self.table[index]
-        while current:
-            if current.key == key:
-                return current.value
-            current = current.next
+    # Looks for item with matching key
+    def lookup(self, key):
+        bucket = hash(key) % len(self.table)
+        bucket_list = self.table[bucket]
 
-    def __str__(self):
-        elements = []
-        for i in range(self.capacity):
-            current = self.table[i]
-            while current:
-                elements.append((current.key, current.value))
-                current = current.next
-        return str(elements)
+        for kv in bucket_list:
+            if kv[0] == key:
+                return kv[1]
+            return None
+
+
+def load_package_data(filename):
+    with open(filename) as wgupsPackageFile:
+        packageData = csv.reader(wgupsPackageFile, delimiter=',')
+        for package in packageData:
+            pID = int(package[0])
+            pAddress = package[1]
+            pCity = package[2]
+            pState = package[3]
+            pZipcode = int(package[4])
+            pDeadline = package[5]
+            pWeight = int(package[6])
+            pStatus = package[7]
+
+            # Package object
+            p = Package(pID, pAddress, pCity, pState, pZipcode, pDeadline, pWeight, pStatus)
+
+            # Insert into the hash table
+            myHashTable.insert(pID, p)
+
+
+# Hash Table instance
+myHashTable = HashTable()
+
 
 class Package:
-    def __init__(self, package_id, address, deadline, city, state, zip_code, pk_weight, status, special_notes):
+    def __init__(self, package_id, address, city, state, zip_code, deadline, pk_weight, status):
         self.package_id = package_id
         self.address = address
         self.city = city
         self.state = state
-        self.deadline = deadline
         self.zip_code = zip_code
+        self.deadline = deadline
         self.pk_weight = pk_weight
         self.status = status
-        self.special_notes = special_notes
+
+        def __str__(self):
+            return "%s, %s, %s, %s, %s, %s, %s, %s" % (
+            self.package_id, self.address, self.city, self.state, self.zip_code, self.deadline, self.pk_weight,
+            self.status)
+
 
 class Truck:
     def __init__(self, truck):
         self.truck = truck
+
+
+# Load packages into Hash Table
+load_package_data('WGUPSPackageFile.csv')
+
+print('Packages:')
+
+for i in range(len(myHashTable.table)):
+    package = myHashTable.lookup(myHashTable.table[i])
+    if package is not None:
+        print('Package ID: {}'.format(package))
 
