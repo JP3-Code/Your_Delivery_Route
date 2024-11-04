@@ -1,3 +1,5 @@
+#Student ID: 011359908
+
 import csv
 
 # Creates hash table
@@ -8,30 +10,32 @@ class HashTable:
             self.table.append([])
 
     # Inserts data into the hash table
-    def insert(self, key, value):
-        bucket = hash(key) % len(self.table)
+    def insert(self, package_id, package):
+        bucket = hash(package_id) % len(self.table)
         bucket_list = self.table[bucket]
 
         # Updates key if already in the bucket
         for item in bucket_list:
-            if item[0] == key:
-                item[1] = value
+            if item[0] == package_id:
+                item[1] = package
                 return True
 
-        bucket_list.append([key,value])
+        bucket_list.append([package_id,package])
         return True
 
     # Looks for item with matching key
-    def lookup(self, key):
-        bucket = hash(key) % len(self.table)
+    def lookup(self, package_id):
+        bucket = hash(package_id) % len(self.table)
         bucket_list = self.table[bucket]
 
         for item in bucket_list:
-            if item[0] == key:
+            if item[0] == package_id:
                 return item[1]
             return None
 
 class Package:
+    statuses = ["At Hub", "In Transit", "Delivered"]
+
     def __init__(self, package_id, address, city, state, zip_code, deadline, pk_weight, status):
         self.package_id = package_id
         self.address = address
@@ -92,4 +96,5 @@ for i in range (1, len(myHashTable.table)+1):
     if package is not None:
 
         print("Package Details: {}".format(package))
+        total+=1
 
