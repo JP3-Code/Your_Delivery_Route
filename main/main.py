@@ -1,5 +1,6 @@
-#Student ID: 011359908
-
+# Jearad Percy
+#C950 Task 2
+# Student ID: 011359908
 import csv
 
 # Creates hash table
@@ -51,13 +52,9 @@ class Package:
         self.package_id, self.address, self.city, self.state, self.zip_code, self.deadline, self.pk_weight,
         self.status)
 
-        #def __str__(self):
-            #return f"ID: {self.package_id}, Address: {self.address}, {self.city}, {self.state}, {self.zip_code}, Deadline: {self.deadline}, Weight: {self.pk_weight}, Status: {self.status}"
-
 class Truck:
     def __init__(self, truck):
         self.truck = truck
-
 
 def loadPackageData(filename):
     with open(filename) as wgupsPackageFile:
@@ -79,6 +76,29 @@ def loadPackageData(filename):
             # Insert into the hash table
             myHashTable.insert(pID, packages)
 
+# Address list initialization
+addressData = []
+
+# Read address csv and loads into list
+def loadAddressData(filename):
+    with open(filename, 'r') as addressDataFile:
+        address = csv.reader(addressDataFile, delimiter=',')
+        next(address)
+
+        for row in address:
+            addressData.append(row)
+
+# Read distance csv and loads into list
+datafile = open ('WGUPSDistanceTable.csv', 'r')
+distance = csv.reader(datafile, delimiter=',')
+next(distance)
+# Initializes 2D list for distances
+distanceData = []
+for row in distance:
+    distanceData.append(row)
+
+loadAddressData('Address.csv')
+#print(addressData)
 
 # Hash Table instance
 myHashTable = HashTable(40)
@@ -87,14 +107,8 @@ myHashTable = HashTable(40)
 loadPackageData('WGUPSPackageFile.csv')
 
 print('Delivery Information:')
-
-# Remove after debugging
-total = 0
-
 for i in range (1, len(myHashTable.table)+1):
     package = myHashTable.lookup(i)
     if package is not None:
 
         print("Package Details: {}".format(package))
-        total+=1
-
